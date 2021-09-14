@@ -13,6 +13,7 @@ import { Route, Link } from 'react-router-dom';
 import { StoreFeatureGameDetail } from '@bg-hoard/store/feature-game-detail';
 import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from 'react';
+import { Game } from '@bg-hoard/util-interface';
 
 const useStyles = makeStyles(() => ({
   cardLink: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles(() => ({
 export const App = () => {
   const classes = useStyles();
   const [state, setState] = useState<{
-    data: any[];
+    data: Game[];
     loadingState: 'success' | 'error' | 'loading';
   }>({
     data: [],
@@ -54,7 +55,9 @@ export const App = () => {
 
   return (
     <>
-      <Link className={classes.cardLink} to={'/'}><Header title={'Board Game Hoard'} /></Link>
+      <Link className={classes.cardLink} to={'/'}>
+        <Header title={'Board Game Hoard'} />
+      </Link>
       <div className={styles.container}>
         <div className={styles['games-layout']}>
           {state.loadingState === 'loading' ? (
