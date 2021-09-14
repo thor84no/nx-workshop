@@ -50,5 +50,5 @@
       }
     }
   },
-  "tags": ["type:library", "scope:store"]
+  "tags": ["type:ui", "scope:store"]
 }
