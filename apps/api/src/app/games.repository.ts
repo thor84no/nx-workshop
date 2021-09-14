@@ -1,4 +1,4 @@
-import { Game } from '../../../../libs/api/util-interface/src';
+import { Game } from '@bg-hoard/util-interface';
 
 const games: Game[] = [
   {
