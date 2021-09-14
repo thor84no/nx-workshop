@@ -54,7 +54,7 @@ export const App = () => {
 
   return (
     <>
-      <Header title={'Board Game Hoard'} />
+      <Link className={classes.cardLink} to={'/'}><Header title={'Board Game Hoard'} /></Link>
       <div className={styles.container}>
         <div className={styles['games-layout']}>
           {state.loadingState === 'loading' ? (
