@@ -21,8 +21,16 @@
                 "onlyDependOnLibsWithTags": ["scope:api", "scope:shared"]
               },
               {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "sourceTag": "type:feature",
+                "onlyDependOnLibsWithTags": ["type:util", "type:ui", "type:feature"]
+              },
+              {
+                "sourceTag": "type:ui",
+                "onlyDependOnLibsWithTags": ["type:util", "type:ui"]
+              },
+              {
+                "sourceTag": "type:util",
+                "onlyDependOnLibsWithTags": ["type:util"]
               }
             ]
           }
