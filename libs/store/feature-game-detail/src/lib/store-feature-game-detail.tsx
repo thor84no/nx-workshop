@@ -28,25 +28,25 @@ export const StoreFeatureGameDetail = (props: StoreFeatureGameDetailProps) => {
   });
 
   useEffect(() => {
-    setState({
+    setState((state) => ({
       ...state,
       loadingState: 'loading',
-    });
+    }));
     const gameId = props.match.params.id;
     fetch(`/api/games/${gameId}`)
       .then((x) => x.json())
       .then((res) => {
-        setState({
+        setState((state) => ({
           ...state,
           data: res,
           loadingState: 'success',
-        });
+        }));
       })
       .catch(() => {
-        setState({
+        setState((state) => ({
           ...state,
           loadingState: 'error',
-        });
+        }));
       });
   }, [props.match.params.id]);
 
@@ -80,7 +80,8 @@ export const StoreFeatureGameDetail = (props: StoreFeatureGameDetailProps) => {
             >
               <strong>Price:</strong> ${state.data.price?.toFixed(2)}
               <br />
-              <strong>Rating:</strong> {state.data.rating ? formatRating(state.data.rating) : '-'}
+              <strong>Rating:</strong>{' '}
+              {state.data.rating ? formatRating(state.data.rating) : '-'}
             </Typography>
           </CardContent>
           <CardActions>
