@@ -77,6 +77,7 @@ export const StoreFeatureGameDetail = (props: StoreFeatureGameDetailProps) => {
               component="p"
               className={styles['game-rating']}
             >
+              <strong>Price:</strong> ${state.data.price?.toFixed(2)}<br/>
               <strong>Rating:</strong> {formatRating(state.data.rating)}
             </Typography>
           </CardContent>
