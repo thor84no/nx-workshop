@@ -1,14 +1,15 @@
 {
   "npmScope": "bg-hoard",
   "affected": {
-    "defaultBase": "main"
+    "defaultBase": "origin/main"
   },
   "implicitDependencies": {
     "package.json": {
       "dependencies": "*",
       "devDependencies": "*"
     },
-    ".eslintrc.json": "*"
+    ".eslintrc.json": "*",
+    ".github/workflows/ci.yml": "*"
   },
   "tasksRunnerOptions": {
     "default": {
