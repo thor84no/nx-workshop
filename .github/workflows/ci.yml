@@ -18,11 +18,15 @@ jobs:
       - name: Cache
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: |
+            **/node_modules
+            ~/.cache/Cypress
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Yarn install
         run: yarn install --prefer-offline --frozen-lockfile
+
+      - run: npx nx-cloud start-ci-run
 
       - name: Linting
         run: npx nx affected:lint --parallel
@@ -60,7 +64,9 @@ jobs:
       - name: Cache
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: |
+            **/node_modules
+            ~/.cache/Cypress
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - run: yarn install
