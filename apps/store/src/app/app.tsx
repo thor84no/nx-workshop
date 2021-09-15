@@ -56,7 +56,7 @@ export const App = () => {
   return (
     <>
       <Link className={classes.cardLink} to={'/'}>
-        <Header title={'Board Game Hoard'} />
+        <Header title={'Board Game Hoard the Third'} />
       </Link>
       <div className={styles.container}>
         <div className={styles['games-layout']}>
