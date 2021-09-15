@@ -3,26 +3,19 @@ name: Run CI checks
 on: [ pull_request ]
 
 jobs:
-  test-store:
+  affected:
     runs-on: ubuntu-latest
-    name: Test Store
+    name: Test Affected
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Trigger yarn install
+      - name: Yarn install
         uses: bahmutov/npm-install@v1
-      - name: Run affected tests
+      - name: Linting
+        run: npx nx affected:lint
+      - name: Run tests
         run: npx nx affected:test --parallel
       - name: Start API
         run: npx nx run api:serve &
-      - name: Run affected e2e tests
+      - name: Run e2e tests
         run: npx nx affected:e2e --headless
-  test-api:
-    runs-on: ubuntu-latest
-    name: Test API
-    steps:
-      - uses: actions/checkout@v1
-      - uses: bahmutov/npm-install@v1
-      - run: npx nx test api
