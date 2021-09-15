@@ -56,6 +56,12 @@
         }
       }
     },
+    "deploy": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npx surge dist/apps/store https://${SURGE_DOMAIN}.surge.sh --token ${SURGE_TOKEN}"
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
