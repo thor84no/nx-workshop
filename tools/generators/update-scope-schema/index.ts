@@ -7,13 +7,29 @@ function objectFromEntries(array: unknown[]) {
   }, {});
 }
 
+async function getNxJsonTags(tree: Tree, project: string) {
+  const nxJson = await readJson(tree, 'nx.json');
+  return nxJson.projects[project]?.tags ?? [];
+}
+
 async function getProjectDefinitions(workspace: any, tree: Tree) {
   const jsonPromises = Object.entries(workspace.projects).map(
-    async ([project, json]) => {
+    async ([project, json]: [project: any, json: string | object]) => {
       if (typeof json === 'string') {
-        return [project, await readJson(tree, `${json}/project.json`)];
+        const jsonPath = `${json}/project.json`;
+        return [
+          project,
+          {
+            ...(await readJson(tree, jsonPath)),
+            origin: jsonPath,
+            name: project,
+          },
+        ];
       }
-      return [project, json];
+      return [
+        project,
+        { ...json, tags: await getNxJsonTags(tree, project), name: project },
+      ];
     }
   );
   return objectFromEntries(await Promise.all(jsonPromises));
@@ -34,7 +50,7 @@ function getScopes(projects: any): string[] {
   return flat(
     Object.values(projects).map((project: any) =>
       project.tags
-        .filter((tag) => tag.startsWith('scope:'))
+        ?.filter((tag) => tag.startsWith('scope:'))
         .map((tag) => tag.substring('scope:'.length))
     )
   ).filter(unique);
@@ -62,9 +78,39 @@ async function updateGeneratorScopes(
   await writeJson(tree, jsonPath, schema);
 }
 
+async function setMissingScopeTags(tree: Tree, projects: any) {
+  const projectsMissingScope = Object.values(projects).filter(
+    (project: any) => !project.tags?.find((tag) => tag.startsWith('scope:'))
+  );
+  const scopes = projectsMissingScope.map((project: any) => {
+    const match = project.root.match(/libs\/([^\/]+)\/?([^\/]+)?/);
+    if (match?.[2]) {
+      return { project, scope: match[1] };
+    }
+    return { project, scope: match[1].replace(/-.*/, '') };
+  });
+  await Promise.all(
+    scopes.map(async (scopeMetadata) => {
+      const { origin, name, ...project } = scopeMetadata.project;
+      const scope = scopeMetadata.scope;
+      if (origin) {
+        await writeJson(tree, origin, {
+          ...project,
+          tags: [...project.tags, `scope:${scope}`],
+        });
+      } else {
+        const nxJson = await readJson(tree, 'nx.json');
+        nxJson.projects[name].tags.push(`scope:${scope}`);
+        await writeJson(tree, 'nx.json', nxJson);
+      }
+    })
+  );
+}
+
 export default async function (tree: Tree) {
   const workspace = await readJson(tree, 'workspace.json');
   const projects = await getProjectDefinitions(workspace, tree);
+  await setMissingScopeTags(tree, projects);
   const scopes = getScopes(projects);
   await updateGeneratorScopes(tree, 'feature-lib', scopes);
   await updateGeneratorScopes(tree, 'util-lib', scopes);
