@@ -14,11 +14,7 @@
     },
     "directory": {
       "type": "string",
-      "enum": [
-        "store",
-        "api",
-        "shared"
-      ],
+      "enum": ["api", "store", "shared"],
       "description": "Library directory",
       "x-prompt": {
         "message": "Which type of library would you like to generate?",
