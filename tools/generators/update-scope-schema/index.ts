@@ -1,4 +1,10 @@
-import { formatFiles, readJson, Tree, writeJson } from '@nrwl/devkit';
+import {
+  formatFiles,
+  readJson,
+  Tree,
+  updateJson,
+  writeJson,
+} from '@nrwl/devkit';
 
 function objectFromEntries(array: unknown[]) {
   return array.reduce((accumulator, [key, value]) => {
@@ -62,20 +68,21 @@ async function updateGeneratorScopes(
   scopes: string[]
 ) {
   const jsonPath = `tools/generators/${name}/schema.json`;
-  const schema = await readJson(tree, jsonPath);
-  schema.properties.directory.enum = scopes;
-  const prompt = schema.properties.directory['x-prompt'];
-  prompt.items = prompt.items.filter((item) => scopes.includes(item.value));
-  const items = prompt.items;
-  scopes
-    .filter((scope) => !items.find((item) => item.value === scope))
-    .forEach((scope) => {
-      items.push({
-        value: scope,
-        label: scope.charAt(0).toUpperCase() + scope.substring(1),
+  updateJson(tree, jsonPath, (schema) => {
+    schema.properties.directory.enum = scopes;
+    const prompt = schema.properties.directory['x-prompt'];
+    prompt.items = prompt.items.filter((item) => scopes.includes(item.value));
+    const items = prompt.items;
+    scopes
+      .filter((scope) => !items.find((item) => item.value === scope))
+      .forEach((scope) => {
+        items.push({
+          value: scope,
+          label: scope.charAt(0).toUpperCase() + scope.substring(1),
+        });
       });
-    });
-  await writeJson(tree, jsonPath, schema);
+    return schema;
+  });
 }
 
 async function setMissingScopeTags(tree: Tree, projects: any) {
