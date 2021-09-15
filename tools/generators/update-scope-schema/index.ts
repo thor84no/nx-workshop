@@ -1,10 +1,9 @@
-import { Tree, formatFiles, installPackagesTask } from '@nrwl/devkit';
-import { libraryGenerator } from '@nrwl/workspace/generators';
+import { Tree, formatFiles, updateJson } from '@nrwl/devkit';
 
-export default async function (tree: Tree, schema: any) {
-  await libraryGenerator(tree, { name: schema.name });
+export default async function (tree: Tree) {
+  await updateJson(tree, 'workspace.json', (json) => ({
+    ...json,
+    defaultProject: 'api',
+  }));
   await formatFiles(tree);
-  return () => {
-    installPackagesTask(tree);
-  };
 }
