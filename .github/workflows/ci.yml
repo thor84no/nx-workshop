@@ -12,10 +12,10 @@ jobs:
       - name: Yarn install
         uses: bahmutov/npm-install@v1
       - name: Linting
-        run: npx nx affected:lint
+        run: npx nx affected:lint --parallel
       - name: Run tests
         run: npx nx affected:test --parallel
       - name: Start API
         run: npx nx run api:serve &
       - name: Run e2e tests
-        run: npx nx affected:e2e --headless
+        run: npx nx affected:e2e --headless --parallel
