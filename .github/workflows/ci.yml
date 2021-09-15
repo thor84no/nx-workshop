@@ -9,7 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1 # checkout whatever branch the PR is using
       - uses: bahmutov/npm-install@v1 # trigger an `npm install`
-      - run: npm run nx test store
+      - run: npx nx affected:test
+      - run: npx nx run api:serve
+      - run: npx nx affected:e2e --headless
   test-api:
     runs-on: ubuntu-latest
     name: Test API
