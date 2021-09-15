@@ -28,20 +28,11 @@ jobs:
 
       - run: npx nx-cloud start-ci-run
 
-      - name: Linting
-        run: npx nx affected:lint --parallel
-
-      - name: Build
-        run: npx nx affected:build --parallel
-
-      - name: Run tests
-        run: npx nx affected:test --parallel
-
       - name: Start API
         run: npx nx run api:serve &
 
-      - name: Run e2e tests
-        run: npx nx affected:e2e --headless --parallel
+      - name: Verification steps
+        run: parallel -i npx nx "{}" --parallel -- affected:lint affected:build affected:test affected:e2e
 
       - name: Stop agents
         run: npx nx-cloud stop-all-agents
