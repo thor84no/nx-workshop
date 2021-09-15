@@ -2,24 +2,56 @@ name: Run CI checks
 
 on: [ pull_request ]
 
+env:
+  NX_CLOUD_DISTRIBUTED_EXECUTION: 'true'
+
 jobs:
-  affected:
+  verification:
     runs-on: ubuntu-latest
-    name: Test Affected
+    name: Verification
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
       - name: Yarn install
-        uses: bahmutov/npm-install@v1
+        run: yarn install --prefer-offline --frozen-lockfile
+
       - name: Linting
         run: npx nx affected:lint --parallel
+
       - name: Build
         run: npx nx affected:build --parallel
+
       - name: Run tests
         run: npx nx affected:test --parallel
+
       - name: Start API
         run: npx nx run api:serve &
+
       - name: Run e2e tests
         run: npx nx affected:e2e --headless --parallel
+
+      - name: Stop agents
+        run: npx nx-cloud stop-all-agents
+
+  agents:
+    name: Nx Cloud Agents
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        agent: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: yarn install
+      - name: Start Nx Agent ${{ matrix.agent }}
+        run: npx nx-cloud start-agent
