@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Yarn install
         uses: bahmutov/npm-install@v1
       - name: Linting
